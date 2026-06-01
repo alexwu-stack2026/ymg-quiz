@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>YMG移動服務風格測驗</title>
+
+<!-- ============================================================
+     CDN 字體：Noto Sans TC（內文）＋ Outfit（顯示用標題）
+     ============================================================ -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   設計系統 — Coral Energy 配色（CSS 變數集中管理）
+   ============================================================ */
+:root{
+  /* 主色系 */
+  --coral:        #FF6F61;
+  --coral-bright: #FF7E6B;
+  --terracotta:   #E8503A;
+  --coral-soft:   #FFEDE6;
+
+  /* 中性色（暖調） */
+  --cream:        #FFF8F4;
+  --peach:        #FFEFE8;
+  --ink:          #3A2E2A;
+  --ink-soft:     #6E5E57;
+  --line:         #F0DACF;
+  --white:        #FFFFFF;
+
+  /* 狀態色 */
+  --error:        #D7392B;
+  --success:      #2E9E6B;
+
+  /* 排版與間距 */
+  --radius:       18px;
+  --radius-sm:    12px;
+  --shadow:       0 18px 50px -18px rgba(232,80,58,.35);
+  --shadow-soft:  0 6px 24px -10px rgba(58,46,42,.18);
+  --font-body:    'Noto Sans TC', system-ui, sans-serif;
+  --font-display: 'Outfit', 'Noto Sans TC', sans-serif;
+  --maxw:         640px;
+}
+
+/* ============================================================
+   全域重置
+   ============================================================ */
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+
+html,body{ height:100%; }
+
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  line-height:1.7;
+  background:
+    radial-gradient(1200px 600px at 110% -10%, var(--coral-soft) 0%, transparent 55%),
+    radial-gradient(900px 500px at -10% 110%, var(--peach) 0%, transparent 55%),
+    var(--cream);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============================================================
+   版面容器
+   ============================================================ */
+.app{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:32px 20px 64px;
+}
+
+.brand{
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:26px;
+}
+.brand-dot{
+  width:30px; height:30px; border-radius:9px;
+  background:linear-gradient(135deg, var(--coral-bright), var(--terracotta));
+  box-shadow:var(--shadow-soft);
+}
+.brand-name{
+  font-family:var(--font-display);
+  font-weight:800; font-size:1.05rem;
+  letter-spacing:.02em; color:var(--ink);
+}
+
+.card{
+  width:100%;
+  max-width:var(--maxw);
+  background:var(--white);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:40px;
+  animation:rise .5s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes rise{
+  from{ opacity:0; transform:translateY(14px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* ============================================================
+   進度指示器（步驟條）
+   ============================================================ */
+.steps{
+  display:flex; gap:8px;
+  width:100%; max-width:var(--maxw);
+  margin-bottom:18px;
+}
+.steps span{
+  flex:1; height:6px; border-radius:99px;
+  background:var(--line); transition:background .35s ease;
+}
+.steps span.active{
+  background:linear-gradient(90deg, var(--coral-bright), var(--terracotta));
+}
+
+/* ============================================================
+   文字樣式
+   ============================================================ */
+.eyebrow{
+  display:inline-block;
+  font-family:var(--font-display);
+  font-weight:700; font-size:.72rem;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--terracotta);
+  background:var(--coral-soft);
+  padding:6px 12px; border-radius:99px;
+  margin-bottom:16px;
+}
+h1{
+  font-family:var(--font-display);
+  font-weight:800; font-size:1.7rem;
+  line-height:1.25; color:var(--ink);
+  margin-bottom:10px;
+}
+.lead{ color:var(--ink-soft); font-size:.98rem; margin-bottom:24px; }
+
+/* ============================================================
+   個資宣告區塊
+   ============================================================ */
+.privacy{
+  background:var(--cream);
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  padding:22px;
+  max-height:340px; overflow-y:auto;
+  font-size:.92rem; color:var(--ink-soft);
+  margin-bottom:22px;
+}
+.privacy h2{
+  font-size:1rem; color:var(--ink); margin-bottom:10px;
+  font-family:var(--font-display); font-weight:700;
+}
+.privacy ul{ padding-left:18px; margin:10px 0; }
+.privacy li{ margin-bottom:6px; }
+.privacy::-webkit-scrollbar{ width:8px; }
+.privacy::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
+
+/* 同意勾選 */
+.consent{
+  display:flex; align-items:flex-start; gap:12px;
+  padding:16px; border:1.5px solid var(--line);
+  border-radius:var(--radius-sm); cursor:pointer;
+  transition:border-color .25s, background .25s;
+  user-select:none;
+}
+.consent:hover{ border-color:var(--coral); }
+.consent.checked{ border-color:var(--coral); background:var(--coral-soft); }
+.consent input{ position:absolute; opacity:0; pointer-events:none; }
+.checkbox{
+  width:24px; height:24px; flex-shrink:0; margin-top:1px;
+  border:2px solid var(--line); border-radius:8px;
+  display:grid; place-items:center;
+  transition:all .2s;
+}
+.consent.checked .checkbox{
+  background:linear-gradient(135deg,var(--coral-bright),var(--terracotta));
+  border-color:transparent;
+}
+.checkbox svg{ width:14px; height:14px; opacity:0; transform:scale(.5); transition:.2s; }
+.consent.checked .checkbox svg{ opacity:1; transform:scale(1); }
+.consent-text{ font-size:.92rem; color:var(--ink); }
+
+/* ============================================================
+   表單欄位
+   ============================================================ */
+.field{ margin-bottom:22px; }
+.field label{
+  display:block; font-weight:500; font-size:.92rem;
+  margin-bottom:8px; color:var(--ink);
+}
+.field label .req{ color:var(--coral); margin-left:3px; }
+.field input{
+  width:100%; padding:14px 16px;
+  font-family:var(--font-body); font-size:1rem; color:var(--ink);
+  background:var(--cream);
+  border:1.5px solid var(--line); border-radius:var(--radius-sm);
+  transition:border-color .2s, box-shadow .2s, background .2s;
+}
+.field input::placeholder{ color:#C5B2A8; }
+.field input:focus{
+  outline:none; background:var(--white);
+  border-color:var(--coral);
+  box-shadow:0 0 0 4px var(--coral-soft);
+}
+.field input.invalid{
+  border-color:var(--error);
+  box-shadow:0 0 0 4px rgba(215,57,43,.12);
+}
+.error-msg{
+  display:none; color:var(--error);
+  font-size:.82rem; margin-top:6px;
+}
+.error-msg.show{ display:block; }
+
+/* ============================================================
+   按鈕
+   ============================================================ */
+.actions{ display:flex; gap:12px; margin-top:8px; }
+.btn{
+  flex:1; padding:15px 22px;
+  font-family:var(--font-display); font-weight:700; font-size:1rem;
+  border:none; border-radius:var(--radius-sm); cursor:pointer;
+  transition:transform .15s, box-shadow .25s, opacity .2s;
+}
+.btn-primary{
+  color:var(--white);
+  background:linear-gradient(135deg, var(--coral-bright), var(--terracotta));
+  box-shadow:var(--shadow);
+}
+.btn-primary:hover:not(:disabled){ transform:translateY(-2px); }
+.btn-primary:active:not(:disabled){ transform:translateY(0); }
+.btn-primary:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; }
+.btn-ghost{
+  flex:0 0 auto; padding:15px 22px;
+  background:transparent; color:var(--ink-soft);
+  border:1.5px solid var(--line);
+}
+.btn-ghost:hover{ border-color:var(--coral); color:var(--terracotta); }
+
+/* ============================================================
+   頁面切換
+   ============================================================ */
+.page{ display:none; }
+.page.active{ display:block; }
+
+/* 防作弊：作答進行時禁止文字選取 */
+body.exam-mode, body.exam-mode *{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+/* 例外：輸入欄位仍允許操作（作答頁無輸入框，保險起見保留） */
+body.exam-mode input, body.exam-mode textarea{
+  -webkit-user-select:text;
+  user-select:text;
+}
+
+.footnote{
+  text-align:center; color:var(--ink-soft);
+  font-size:.78rem; margin-top:24px;
+}
+
+/* ============================================================
+   Page 3 — 作答頁
+   ============================================================ */
+.quiz-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px;
+}
+.q-counter{
+  font-family:var(--font-display); font-weight:800;
+  font-size:1.05rem; color:var(--ink);
+}
+.q-counter b{ color:var(--terracotta); }
+.q-timer{
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--font-display); font-weight:700;
+  font-size:.95rem; color:var(--ink-soft);
+}
+.q-timer .sec{ color:var(--terracotta); min-width:1.6em; text-align:right; }
+
+/* 倒數進度條 */
+.timer-track{
+  width:100%; height:8px; border-radius:99px;
+  background:var(--line); overflow:hidden; margin-bottom:26px;
+}
+.timer-fill{
+  height:100%; width:100%;
+  background:linear-gradient(90deg, var(--coral-bright), var(--terracotta));
+  transform-origin:left center;
+  /* width 由 JS 以 transition 線性遞減控制 */
+  transition:width 1s linear;
+}
+.timer-fill.warn{
+  background:linear-gradient(90deg, #FF9A3D, var(--error));
+}
+
+.q-text{
+  font-family:var(--font-display); font-weight:700;
+  font-size:1.22rem; line-height:1.45; color:var(--ink);
+  margin-bottom:24px;
+}
+
+/* 選項 */
+.options{ display:flex; flex-direction:column; gap:12px; }
+.option{
+  display:flex; align-items:flex-start; gap:14px;
+  width:100%; text-align:left;
+  padding:16px 18px;
+  background:var(--cream);
+  border:1.5px solid var(--line); border-radius:var(--radius-sm);
+  font-family:var(--font-body); font-size:1rem; color:var(--ink);
+  cursor:pointer; transition:border-color .18s, background .18s, transform .12s;
+}
+.option:hover{ border-color:var(--coral); }
+.option:active{ transform:scale(.995); }
+.option.selected{ border-color:var(--coral); background:var(--coral-soft); }
+.option .opt-key{
+  flex-shrink:0; width:30px; height:30px; border-radius:8px;
+  display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:800; font-size:.95rem;
+  background:var(--white); border:1.5px solid var(--line);
+  color:var(--ink-soft); transition:all .18s;
+}
+.option.selected .opt-key{
+  background:linear-gradient(135deg,var(--coral-bright),var(--terracotta));
+  border-color:transparent; color:var(--white);
+}
+.option .opt-label{ padding-top:3px; line-height:1.55; }
+
+.quiz-foot{ margin-top:26px; }
+.quiz-foot .btn-primary:disabled{ opacity:.45; }
+
+/* ============================================================
+   Page 4 — 完成頁
+   ============================================================ */
+.done-wrap{ text-align:center; }
+.done-icon{
+  width:84px; height:84px; margin:6px auto 22px;
+  border-radius:50%;
+  display:grid; place-items:center;
+  background:linear-gradient(135deg, var(--coral-bright), var(--terracotta));
+  box-shadow:var(--shadow);
+  animation:pop .5s cubic-bezier(.2,.8,.2,1.2) both;
+}
+@keyframes pop{
+  from{ transform:scale(.4); opacity:0; }
+  to{ transform:scale(1); opacity:1; }
+}
+.done-icon svg{ width:42px; height:42px; }
+.done-wrap h1{ margin-bottom:8px; }
+.done-wrap .lead{ margin-bottom:24px; }
+
+/* 送出狀態列 */
+.status{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  padding:14px 18px; border-radius:var(--radius-sm);
+  font-size:.92rem; font-weight:500;
+  margin-bottom:18px;
+}
+.status.sending{ background:var(--coral-soft); color:var(--terracotta); }
+.status.ok{ background:#E6F6EE; color:var(--success); }
+.status.fail{ background:#FCE9E7; color:var(--error); }
+.status.hide{ display:none; }
+
+/* 載入轉圈 */
+.spinner{
+  width:18px; height:18px; flex-shrink:0;
+  border:2.5px solid rgba(232,80,58,.25);
+  border-top-color:var(--terracotta);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* 個資同意連結 */
+.consent-row{ margin-top:4px; }
+.consent-row .consent{ margin-bottom:8px; }
+.consent-link{
+  display:inline-block; margin-left:2px;
+  color:var(--terracotta); font-weight:700; font-size:.88rem;
+  text-decoration:underline; text-underline-offset:2px;
+  cursor:pointer;
+}
+.consent-link:hover{ color:var(--coral); }
+
+/* ============================================================
+   Page 2 — 測驗說明規則清單
+   ============================================================ */
+.rule-list{ list-style:none; margin:8px 0 26px; }
+.rule-list li{
+  display:flex; align-items:flex-start; gap:14px;
+  padding:16px; margin-bottom:12px;
+  background:var(--cream);
+  border:1.5px solid var(--line); border-radius:var(--radius-sm);
+}
+.rule-list .rule-ic{
+  flex-shrink:0; width:40px; height:40px; border-radius:11px;
+  display:grid; place-items:center; font-size:1.2rem;
+  background:var(--coral-soft);
+}
+.rule-list strong{ color:var(--ink); font-size:1rem; }
+.rule-list span{ color:var(--ink-soft); font-size:.9rem; }
+
+/* ============================================================
+   個資宣告彈窗（Modal）
+   ============================================================ */
+.modal-overlay{
+  position:fixed; inset:0; z-index:1000;
+  display:none; align-items:center; justify-content:center;
+  padding:20px;
+  background:rgba(58,46,42,.5);
+  backdrop-filter:blur(3px);
+}
+.modal-overlay.open{ display:flex; animation:fade .25s ease both; }
+@keyframes fade{ from{ opacity:0; } to{ opacity:1; } }
+
+.modal{
+  width:100%; max-width:560px; max-height:85vh;
+  background:var(--white); border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  display:flex; flex-direction:column; overflow:hidden;
+  animation:rise .3s cubic-bezier(.2,.7,.2,1) both;
+}
+.modal-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:22px 24px 16px; border-bottom:1px solid var(--line);
+}
+.modal-head h2{
+  font-family:var(--font-display); font-weight:800; font-size:1.15rem;
+  color:var(--ink);
+}
+.modal-close{
+  border:none; background:transparent; cursor:pointer;
+  font-size:1.7rem; line-height:1; color:var(--ink-soft);
+  width:36px; height:36px; border-radius:9px; transition:background .2s;
+}
+.modal-close:hover{ background:var(--coral-soft); color:var(--terracotta); }
+.modal-body{
+  padding:20px 24px; overflow-y:auto;
+  font-size:.92rem; color:var(--ink-soft); line-height:1.75;
+}
+.modal-body p{ margin-bottom:12px; }
+.modal-body ul{ padding-left:18px; margin:10px 0; }
+.modal-body li{ margin-bottom:8px; }
+.modal-body strong{ color:var(--ink); }
+.modal-body::-webkit-scrollbar{ width:8px; }
+.modal-body::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
+.modal-foot{
+  padding:16px 24px 22px; border-top:1px solid var(--line);
+}
+.modal-foot .btn{ width:100%; }
+
+/* ============================================================
+   RWD
+   ============================================================ */
+@media (max-width:520px){
+  .card{ padding:26px 20px; }
+  h1{ font-size:1.42rem; }
+  .app{ padding:22px 14px 48px; }
+  .q-text{ font-size:1.08rem; }
+  .option{ padding:14px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- 品牌標頭 -->
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <div class="brand-name">YMG 移動服務 · 風格測驗</div>
+  </div>
+
+  <!-- 步驟進度條 -->
+  <div class="steps" id="steps">
+    <span data-step="1"></span>
+    <span data-step="2"></span>
+    <span data-step="3"></span>
+    <span data-step="4"></span>
+  </div>
+
+  <!-- ====================================================
+       PAGE 1 — 基本資料（含個資勾選 + 連結）
+       ==================================================== -->
+  <section class="page" id="page1" aria-label="基本資料">
+    <div class="card">
+      <span class="eyebrow">Step 01 · 基本資料</span>
+      <h1>請填寫您的基本資料</h1>
+      <p class="lead">以下欄位皆為必填，請確認資訊正確後繼續。</p>
+
+      <div class="field">
+        <label for="name">姓名<span class="req">*</span></label>
+        <input type="text" id="name" placeholder="請輸入您的真實姓名" autocomplete="name" />
+        <div class="error-msg" id="nameErr">請輸入姓名（至少 2 個字）。</div>
+      </div>
+
+      <div class="field">
+        <label for="phone">聯絡電話<span class="req">*</span></label>
+        <input type="tel" id="phone" placeholder="例如 0912345678" autocomplete="tel" inputmode="numeric" />
+        <div class="error-msg" id="phoneErr">請輸入有效的手機號碼（09 開頭，共 10 碼）。</div>
+      </div>
+
+      <!-- 個資同意：勾選 + 連結開啟全文 -->
+      <div class="consent-row">
+        <label class="consent" id="consentBox">
+          <input type="checkbox" id="consentCheck" />
+          <span class="checkbox">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="consent-text">勾選即表示您已了解並同意個人資料蒐集告知聲明。</span>
+        </label>
+        <a href="#" class="consent-link" id="openPrivacy">檢視個人資料蒐集告知聲明全文</a>
+      </div>
+      <div class="error-msg" id="consentErr">請先勾選同意個人資料蒐集告知聲明。</div>
+
+      <div class="actions" style="margin-top:24px;">
+        <button class="btn btn-primary" id="toPage2">下一步</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================
+       PAGE 2 — 測驗說明
+       ==================================================== -->
+  <section class="page" id="page2" aria-label="測驗說明">
+    <div class="card">
+      <span class="eyebrow">Step 02 · 測驗說明</span>
+      <h1>開始前請詳閱測驗規則</h1>
+      <p class="lead">本次測驗為單向作答，請於安靜不受干擾的環境中完成。</p>
+
+      <ul class="rule-list">
+        <li>
+          <span class="rule-ic">⏱</span>
+          <div><strong>每題限時 20 秒</strong><br><span>時間結束將自動跳至下一題，請把握作答時間。</span></div>
+        </li>
+        <li>
+          <span class="rule-ic">🚫</span>
+          <div><strong>無法回到上一題</strong><br><span>作答採單向進行，送出後不可返回修改先前題目。</span></div>
+        </li>
+        <li>
+          <span class="rule-ic">✔</span>
+          <div><strong>必須選擇答案才能繼續</strong><br><span>每題皆須點選一個選項，才能進入下一題。</span></div>
+        </li>
+        <li>
+          <span class="rule-ic">📋</span>
+          <div><strong>共 30 題</strong><br><span>建議全程專注作答，依您的真實想法選擇最適切的答案。</span></div>
+        </li>
+      </ul>
+
+      <div class="actions">
+        <button class="btn btn-ghost" id="backTo1">返回</button>
+        <button class="btn btn-primary" id="toPage3">我已了解，開始測驗</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================
+       PAGE 3 / PAGE 4 — 作答 / 完成（動態建置）
+       ==================================================== -->
+  <section class="page" id="page3" aria-label="作答"></section>
+  <section class="page" id="page4" aria-label="完成"></section>
+
+</div>
+
+<!-- ====================================================
+     個資宣告彈窗（Modal）
+     ==================================================== -->
+<div class="modal-overlay" id="privacyModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="個人資料蒐集告知聲明">
+    <div class="modal-head">
+      <h2>個人資料蒐集告知聲明</h2>
+      <button class="modal-close" id="closePrivacy" aria-label="關閉">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>移動服務事業（下稱本公司）為辦理人才招募作業，依據《個人資料保護法》第 8 條規定，於蒐集您的個人資料前，向您告知下列事項：</p>
+      <ul>
+        <li><strong>蒐集目的：</strong>人才招募與甄選評估。</li>
+        <li><strong>蒐集之個人資料類別：</strong>姓名、聯絡電話，以及本次線上測驗之作答內容。</li>
+        <li><strong>個人資料利用期間：</strong>自蒐集之日起，至本次招募作業結束後六個月止；屆期將依規定刪除或銷毀。</li>
+        <li><strong>利用對象與地區：</strong>僅供本公司人力資源單位及招募主管於台灣地區內部評估使用，<strong>不對外提供予任何第三方</strong>。</li>
+        <li><strong>利用方式：</strong>以電子檔案形式儲存於本公司內部系統，供前述對象進行招募評估。</li>
+      </ul>
+      <p><strong>當事人權利：</strong>依個資法第 3 條規定，您就本公司保有之個人資料得行使下列權利：(一) 查詢或請求閱覽；(二) 請求製給複製本；(三) 請求補充或更正；(四) 請求停止蒐集、處理或利用；(五) 請求刪除。如欲行使上述權利，請逕洽本公司人力資源單位。</p>
+      <p><strong>不提供之效果：</strong>您可自由選擇是否提供個人資料，惟若不提供前述必要資料，將無法完成本次測驗及後續招募評估作業。</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-primary" id="agreeFromModal">我已閱讀並同意</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   應用程式主模組（IIFE 封裝，避免全域變數污染）
+   ============================================================ */
+const QuizApp = (function(){
+  'use strict';
+
+  /* --------------------------------------------------------
+     集中式狀態
+     -------------------------------------------------------- */
+  const AppState = {
+    consent: false,        // Page 1 同意狀態
+    name: '',              // 姓名
+    phone: '',             // 聯絡電話
+    answers: {},           // 作答結果 { q1:'A', q2:'', ... }
+    currentPage: 1,        // 目前頁面
+    currentQ: 0,           // 目前題目索引（0-based）
+    timerId: null,         // 倒數計時器 handle
+    remaining: 0           // 本題剩餘秒數
+  };
+
+  /* --------------------------------------------------------
+     設定常數
+     -------------------------------------------------------- */
+  const CONFIG = {
+    minNameLength: 2,
+    // 台灣手機：09 開頭，共 10 碼
+    phoneRegex: /^09\d{8}$/,
+    secondsPerQuestion: 20,
+    totalQuestions: 30,
+    // 第四階段填入 Power Automate HTTP Trigger URL
+    ENDPOINT_URL: ''
+  };
+
+  /* --------------------------------------------------------
+     題庫（單選題；options 為陣列，可僅 2 個）
+     ★ 標準答案不放前端，計分由後端 Excel Online 處理 ★
+     -------------------------------------------------------- */
+  const QUESTIONS = [
+    { q:'關於跨部門溝通的核心重點，下列敘述何者較為適切？', options:[
+      ['A','為避免誤會擴大，溝通時應優先完整說明公司立場與處理方式'],
+      ['B','溝通的重點在於先掌握對方在意的關鍵，再進行對應說明與回應'],
+      ['C','溝通的目的在於讓對方理解並接受既定規則，以利流程順暢'],
+      ['D','只要說明內容正確且合乎規範，即可視為完成有效溝通'] ] },
+    { q:'在實踐從他人立場思考時，較符合服務精神的自我提問為何？', options:[
+      ['A','我是否已準備好足夠的說明資料，以快速解釋問題'],
+      ['B','我是否理解對方目前最在意的是結果、過程還是感受'],
+      ['C','是否能從制度或合約條文中，找到最有力的回應依據'],
+      ['D','目前是否有方式能在最短時間內結束這次溝通，避免對方覺得我不專業'] ] },
+    { q:'當客戶對帳單金額增加感到不安時，下列哪一種回應方式較能展現專業且合宜的情緒處理？', options:[
+      ['A','先說明計費邏輯與合約條文，讓客戶理解金額變動的合理性'],
+      ['B','以過往經驗安撫客戶，解釋說明這類情況並不罕見'],
+      ['C','先確認客戶不安的原因，並以對方能接受的語言回應其核心疑慮'],
+      ['D','評估將案件升級，由主管出面處理以避免爭議擴大'] ] },
+    { q:'關於優先考慮顧客需求的理解，下列何者最符合優質服務的核心觀念？', options:[
+      ['A','只要快速回應顧客提出的要求，就能提升滿意度'],
+      ['B','依照既有流程處理，避免增加內部作業負擔'],
+      ['C','盡量滿足顧客所有要求，以避免後續抱怨'],
+      ['D','理解顧客提出需求背後的痛點，並設法協助解決'] ] },
+    { q:'依照標準服務行為指引，下列哪一項作法最符合專業精神？', options:[
+      ['A','依既有流程完成作業，確保現場效率與處理一致性'],
+      ['B','將顧客的意見轉達相關單位，後續是否調整再視情況而定'],
+      ['C','留意現場可能影響顧客感受的環節，並主動回饋，作為後續流程優化的參考'],
+      ['D','以避免增加作業負擔為優先，將流程問題留待後續統一處理'] ] },
+    { q:'當顧客反覆詢問處理進度時，下列哪一種回應方式較能有效回應顧客的關切並建立信任？', options:[
+      ['A','說明目前卡在哪個環節，並告知預計何時可有進一步結論'],
+      ['B','懇切告知「案件仍在處理中，請耐心等候」'],
+      ['C','強調流程需要時間，請顧客配合公司規定'],
+      ['D','等到所有結果確認後再聯絡顧客，以免說明不一致造成客戶抱怨'] ] },
+    { q:'在重大專案討論中，若要落實包容多元意見的精神，下列何者最符合專業的作法？', options:[
+      ['A','堅持本單位損益原則，避免承擔額外風險'],
+      ['B','回到整體營運效益，重新思考合理的成本分擔比例'],
+      ['C','先聚焦當期成本壓力，再決定是否競標'],
+      ['D','由主管拍板決定，縮短討論時間'] ] },
+    { q:'面對突發性任務需求，各單位迅速盤點可投入資源並依專業分工同步推進。此運作方式最能體現哪一項職場特質？', options:[
+      ['A','整合資源及專業優勢，在共同目標下同向出力'],
+      ['B','各單位承擔並專注完成自身的任務'],
+      ['C','明確劃分責任，確保單位合理投入，也避免後續爭議'],
+      ['D','盡力確保單位各自的 KPI 達成'] ] },
+    { q:'在跨部門協作過程中出現進度受阻時，下列哪一種做法最符合團結解決問題的行為指引？', options:[
+      ['A','完成自己負責的進度後，視情況提供協助'],
+      ['B','等其他單位都提出解法後，才能合理判斷是否配合'],
+      ['C','與各團隊成員共同找出可行解法，再同步調整分工'],
+      ['D','盤點所有問題回報主管，由上而下統一決策'] ] },
+    { q:'在接待客戶時，發現客戶除了現有需求外，也提到可能有其他潛在的商務需求。此時，較符合創造雙贏價值的做法是？', options:[
+      ['A','將本身服務認真做完即可，其餘需求建議客戶自行詢問，服務會比較到位'],
+      ['B','客戶當時並未明確提出購車需求，若有，再協助提供中古車單位聯繫資訊'],
+      ['C','察覺客戶需求，主動協助客戶與相關單位進一步接洽'],
+      ['D','若客戶未進一步詢問，則不主動延伸其他服務，避免他單位覺得我越界'] ] },
+    { q:'許多工作的成果往往來自不同角色的投入；當大家將成果視為共同承擔的結果時，工作的出發點便不再只是完成個人任務。依此精神，在看待成果與責任時，下列哪一種心態較為適切？', options:[
+      ['A','每個人都專注做好自己分內的部分，整體成果自然會呈現'],
+      ['B','成果順利時共享榮譽，若結果不如預期應由主要負責人當責與承擔'],
+      ['C','依既定分工完成任務，避免影響其他人的工作安排'],
+      ['D','將成果視為整體努力的結果，並願意與夥伴一同面對結果'] ] },
+    { q:'當客戶期待的條件與市場現況出現明顯落差時，相關專業單位應如何運用專業協助促進案件進行？', options:[
+      ['A','依市場行情提供鑑價結果，並說明價格區間供消費者參考'],
+      ['B','說明行情差距後，由消費者自行決定是否出售'],
+      ['C','依專業說明市場行情與價格落差，協助消費者理解以促成交易'],
+      ['D','完成鑑價說明後，即完成本次服務流程'] ] },
+    { q:'在整理營運數據時，發現不同系統產出的數字出現落差。此時，較符合追求事實真相精神的做法是？', options:[
+      ['A','依經驗快速提出對應報告，再逐步修正'],
+      ['B','選擇較符合預期的數據，讓整體結論較為一致'],
+      ['C','先依佔比較大的數據提出結論，對於差異部分暫不處理'],
+      ['D','先釐清各系統數據來源與計算邏輯，確認差異原因後再進行分析'] ] },
+    { q:'下列何者最符合嚴謹處事、基於事實的行為準則？', options:[
+      ['A','綜合經驗與直覺判斷，選擇最具可行性的方案'],
+      ['B','優先拿出統計數據，而非「我覺得」或「以前都是這樣」'],
+      ['C','在資訊尚未完整時，先提出方向並於後續滾動修正'],
+      ['D','依過往經驗快速判斷與解決，提升決策效率'] ] },
+    { q:'在檢視營運報表時，發現團隊反映近期工作負荷加重、壓力提升。在此情境下，較符合基於客觀證據解決問題的做法是？', options:[
+      ['A','依同仁回饋調整人力配置，以降低現場負擔'],
+      ['B','依過往經驗判斷可能原因，提出排班優化方向'],
+      ['C','分析進線數據與時段分布，釐清影響因素後再提出調整方案'],
+      ['D','先提出改善建議並同步執行，後續再觀察是否有效'] ] },
+    { q:'在日常工作中，何者最符合對結果負責的行為準則？', options:[
+      ['A','依照既定流程完成任務，確保自己負責的部分沒有遺漏'],
+      ['B','因時間壓力先完成大概內容，部分細節可視情況調整'],
+      ['C','當任務涉及多方時，先確認責任歸屬，再決定是否介入處理'],
+      ['D','發現問題後主動承擔並持續追蹤，確保結果落實，而非僅完成分內工作'] ] },
+    { q:'第一線同仁在清理環境時發現客戶遺落重要物品，但嘗試撥打電話聯繫未果。此時，何者較符合主動承擔責任的做法？', options:[
+      ['A','已嘗試聯繫，先記錄後續再處理'],
+      ['B','發送簡訊後暫時結案，待客戶主動回覆'],
+      ['C','想其他方法持續嘗試聯繫，直到成功聯絡客戶'],
+      ['D','通知主管後，由主管決定是否繼續聯繫'] ] },
+    { q:'在服務交付後發現異常，經確認為供應商處理環節所致。此時，何者較符合完整承擔問題並尋求對策的做法？', options:[
+      ['A','向客戶說明問題原因，並協助聯繫原廠處理後續事宜'],
+      ['B','協助確認原廠處理方式，並將結果回覆給客戶'],
+      ['C','釐清責任歸屬後完成回報，並依指示進行後續處理'],
+      ['D','協調原廠與客戶需求，持續追蹤處理進度並確認結果'] ] },
+    { q:'關於職場溝通中的客觀與透明度，下列敘述何者較為適切？', options:[
+      ['A','依對方立場調整說法，優先呈現對方較能接受的內容，以提升溝通效果'],
+      ['B','透過引導式提問與重點整理，讓對方自然理解並接受較適合的結論'],
+      ['C','在不影響整體判斷的前提下，適度簡化部分資訊，使溝通更順暢'],
+      ['D','清楚說明完整資訊，並區分已確認的事實與個人的判斷，即使可能會影響對方決策'] ] },
+    { q:'業務發現報價中有一項交易條件未完整說明，可能影響客戶判斷，但當下客戶並未察覺。此時，以下何者最符合真實且透明的處理原則？', options:[
+      ['A','先評估該條件對整體交易影響程度，若屬非關鍵資訊，可於後續適當時機再補充'],
+      ['B','於後續溝通中以重點整理方式補充相關條件，避免一次提供過多資訊影響理解'],
+      ['C','主動聯繫客戶補充說明遺漏條件，並說明其可能影響，即使可能會改變原本判斷'],
+      ['D','聚焦客戶關注重點，針對其在意部分進行如實且詳細補充，其餘視需求再說明'] ] },
+    { q:'在面對重要案件且時程緊迫的情況下，業務需與內部單位協作加快流程。以下何者最符合相互尊重與良性溝通的原則？', options:[
+      ['A','為確保案件順利推進，請主管出面協調溝通，加快處理進度'],
+      ['B','先說明案件的重要性與急迫性，並懇請對方保證優先處理，以確保整體進度不受影響'],
+      ['C','在理解對方作業流程與限制後，共同討論是否有可行的加速方式'],
+      ['D','誠懇提出期望完成時程，並請對方依該時程調整作業順序，以利案件推進'] ] },
+    { q:'在面對已確認的客戶需求與承諾時，下列何者最符合信守承諾的原則？', options:[
+      ['A','若遇突發狀況，需機動調整原承諾，以確保作業效率'],
+      ['B','先承諾客戶需求，再視內部狀況決定是否執行'],
+      ['C','在承諾前確認可行性，並持續推進至落實'],
+      ['D','若無法立即完成，可先降低客戶期待以避免壓力'] ] },
+    { q:'當已預約車輛（或服務）因突發狀況無法提供時，下列哪一種做法最符合落實承諾的精神？', options:[
+      ['A','直接升級更高等級車款提供客戶，彌補原車無法提供的落差'],
+      ['B','第一時間告知客戶無法提供，惠請客戶是否改訂其他車款'],
+      ['C','向主管回報後等待指示，再決定後續處理方式'],
+      ['D','主動協調內部資源並持續追蹤，確保原承諾得以落實'] ] },
+    { q:'下列何者最能體現始終如一、維持服務品質的精神？', options:[
+      ['A','在重要客戶或長官面前特別用心服務，以確保關鍵關係'],
+      ['B','成交後，後續服務依情況調整投入程度'],
+      ['C','依據不同情境彈性調整服務方式，以確保執行效率'],
+      ['D','在不同情境下維持既有處理原則，並持續確保服務品質穩定'] ] },
+    { q:'當你遇到一項自己不熟悉的工作時，哪種做法最能展現積極與自信？', options:[
+      ['A','我先試著從能做的部分開始，相信過程中我會持續進步'],
+      ['B','我會讓自己完全準備好再行動，避免犯錯而影響評價'],
+      ['C','我會先請更有經驗的人示範，確保第一次就成功，增添自己的自信'],
+      ['D','我會先觀察別人怎麼做，看結果如何再決定要不要試'] ] },
+    { q:'現場有外國客戶需要協助，A 君跟 B 君都不擅長外語，下列哪個做法較符合展現主動迎接挑戰的精神？', options:[
+      ['A','A 君客氣地請客人先稍等，等會講英文的同仁有空後再接手，確保服務品質'],
+      ['B','B 君先嘗試用簡單英文與工具溝通，邊做邊調整以完成服務'] ] },
+    { q:'最近市場變得比較保守，業務推進遇到不少阻力。以下哪一種做法更符合樂觀進取的精神？', options:[
+      ['A','把目標動態調低，以因應市場實際狀況，並讓 KPI 順利達標最重要'],
+      ['B','靜觀市場變化，等狀況更明朗後再調整策略'],
+      ['C','不斷調整做法，從危機中找到機會'],
+      ['D','先把基本盤穩住，避免多做多錯'] ] },
+    { q:'面對市場環境或行銷工具的快速轉變，當想要主動開拓新客源時，下列哪一種做法最具有創新與應變精神？', options:[
+      ['A','增加傳統廣告與既有管道的投放'],
+      ['B','主動投入數位新媒體、短影音等新型態社群工具進行品牌宣傳'],
+      ['C','延長工作時間，增加與客戶的交流與通話時長'] ] },
+    { q:'服務人員發現企業客戶除了價格與服務外，也開始關注新能源車、成本結構、稅制與永續發展（ESG）等新興議題。下列哪個做法較符合動態調整、共同成長的精神？', options:[
+      ['A','先依照過去的提案架構回覆，並視客戶反應再彈性補充其他資訊'],
+      ['B','主動整理市場趨勢與政策資訊，並調整提案內容，使回應更貼近客戶關注點'],
+      ['C','針對客戶提出的進階問題，轉請較熟悉議題的同仁協助，以確保內容正確'],
+      ['D','先強化既有價格與服務優勢，避免提案內容過於發散，影響客戶判斷'] ] },
+    { q:'下列何種行為，最符合擁抱轉變與持續演進的核心精神？', options:[
+      ['A','因為察覺到數位趨勢，主管立刻要求部屬去研究並導入新工具'],
+      ['B','為快速解決新挑戰，積極尋求其他單位的專業支援'],
+      ['C','察覺客戶接觸服務的方式逐漸改變，開始嘗試不同溝通工具，讓服務流程更貼近客戶需求'],
+      ['D','只要是主管下的指令，總能快速適應，並完美達成所有要求'] ] }
+  ];
+
+  /* --------------------------------------------------------
+     DOM 快取
+     -------------------------------------------------------- */
+  const el = {};
+  function cacheDom(){
+    el.steps        = document.querySelectorAll('#steps span');
+    el.pages        = document.querySelectorAll('.page');
+    el.name         = document.getElementById('name');
+    el.phone        = document.getElementById('phone');
+    el.nameErr      = document.getElementById('nameErr');
+    el.phoneErr     = document.getElementById('phoneErr');
+    el.consentBox   = document.getElementById('consentBox');
+    el.consentChk   = document.getElementById('consentCheck');
+    el.consentErr   = document.getElementById('consentErr');
+    el.toPage2      = document.getElementById('toPage2');   // Page1「下一步」
+    el.backTo1      = document.getElementById('backTo1');   // Page2「返回」
+    el.toPage3      = document.getElementById('toPage3');   // Page2「開始測驗」
+    // 個資 Modal
+    el.openPrivacy  = document.getElementById('openPrivacy');
+    el.closePrivacy = document.getElementById('closePrivacy');
+    el.agreeModal   = document.getElementById('agreeFromModal');
+    el.privacyModal = document.getElementById('privacyModal');
+  }
+
+  /* --------------------------------------------------------
+     頁面路由：顯示指定頁並更新步驟條
+     -------------------------------------------------------- */
+  function goToPage(n){
+    AppState.currentPage = n;
+    el.pages.forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page' + n);
+    if(target) target.classList.add('active');
+    el.steps.forEach(s => {
+      s.classList.toggle('active', Number(s.dataset.step) <= n);
+    });
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  /* --------------------------------------------------------
+     Page 1：個資同意（勾選 + 連結開啟全文 Modal）
+     -------------------------------------------------------- */
+  function bindConsent(){
+    // consentBox 為 <label>，原生即會切換內部 checkbox 並觸發 change
+    el.consentChk.addEventListener('change', syncConsent);
+
+    // 點「檢視個人資料蒐集告知聲明全文」連結 → 開啟 Modal
+    el.openPrivacy.addEventListener('click', function(e){
+      e.preventDefault();
+      openPrivacyModal();
+    });
+    el.closePrivacy.addEventListener('click', closePrivacyModal);
+    el.privacyModal.addEventListener('click', function(e){
+      if(e.target === el.privacyModal) closePrivacyModal(); // 點背景關閉
+    });
+    // Modal 內「我已閱讀並同意」→ 直接勾選並關閉
+    el.agreeModal.addEventListener('click', function(){
+      el.consentChk.checked = true;
+      syncConsent();
+      closePrivacyModal();
+    });
+  }
+  function syncConsent(){
+    AppState.consent = el.consentChk.checked;
+    el.consentBox.classList.toggle('checked', AppState.consent);
+    if(AppState.consent) el.consentErr.classList.remove('show');
+  }
+  function openPrivacyModal(){
+    el.privacyModal.classList.add('open');
+    el.privacyModal.setAttribute('aria-hidden', 'false');
+  }
+  function closePrivacyModal(){
+    el.privacyModal.classList.remove('open');
+    el.privacyModal.setAttribute('aria-hidden', 'true');
+  }
+
+  /* --------------------------------------------------------
+     Page 1：基本資料表單驗證
+     -------------------------------------------------------- */
+  function validateName(){
+    const v = el.name.value.trim();
+    const ok = v.length >= CONFIG.minNameLength;
+    el.name.classList.toggle('invalid', !ok && v.length > 0);
+    el.nameErr.classList.toggle('show', !ok && v.length > 0);
+    return ok;
+  }
+  function validatePhone(){
+    const v = el.phone.value.trim();
+    const ok = CONFIG.phoneRegex.test(v);
+    el.phone.classList.toggle('invalid', !ok && v.length > 0);
+    el.phoneErr.classList.toggle('show', !ok && v.length > 0);
+    return ok;
+  }
+  function bindForm(){
+    el.name.addEventListener('input', validateName);
+    el.phone.addEventListener('input', validatePhone);
+
+    // Page1「下一步」：驗證姓名、電話、個資同意，全部通過才進 Page2
+    el.toPage2.addEventListener('click', function(){
+      const nameOk    = validateName();
+      const phoneOk   = validatePhone();
+      const consentOk = el.consentChk.checked;
+      if(!nameOk){ el.name.classList.add('invalid'); el.nameErr.classList.add('show'); }
+      if(!phoneOk){ el.phone.classList.add('invalid'); el.phoneErr.classList.add('show'); }
+      if(!consentOk){ el.consentErr.classList.add('show'); }
+      if(nameOk && phoneOk && consentOk){
+        AppState.name  = el.name.value.trim();
+        AppState.phone = el.phone.value.trim();
+        goToPage(2); // 前往測驗說明頁
+      }
+    });
+
+    // Page2「返回」回到基本資料
+    el.backTo1.addEventListener('click', () => goToPage(1));
+
+    // Page2「我已了解，開始測驗」→ 啟動作答
+    el.toPage3.addEventListener('click', function(){
+      startQuiz();
+      goToPage(3);
+    });
+  }
+
+  /* --------------------------------------------------------
+     防作弊模組（僅作答頁啟用）
+     -------------------------------------------------------- */
+  const AntiCheat = (function(){
+    let active = false;
+
+    // 阻擋事件的處理函式（具名以便正確解除）
+    function block(e){ e.preventDefault(); return false; }
+
+    // 離頁警告（beforeunload）
+    function onBeforeUnload(e){
+      e.preventDefault();
+      e.returnValue = ''; // 觸發瀏覽器原生離頁確認
+      return '';
+    }
+
+    // 攔截複製 / 剪下 / 貼上 與鍵盤快捷鍵
+    function onKeydown(e){
+      const k = (e.key || '').toLowerCase();
+      // Ctrl/Cmd + C / V / X / A
+      if((e.ctrlKey || e.metaKey) && ['c','v','x','a'].indexOf(k) !== -1){
+        e.preventDefault();
+        return false;
+      }
+    }
+
+    function enable(){
+      if(active) return;
+      active = true;
+      document.addEventListener('contextmenu', block);   // 禁止右鍵
+      document.addEventListener('selectstart', block);    // 禁止選取
+      document.addEventListener('copy', block);           // 禁止複製
+      document.addEventListener('cut', block);            // 禁止剪下
+      document.addEventListener('paste', block);          // 禁止貼上
+      document.addEventListener('dragstart', block);      // 禁止拖曳選取
+      document.addEventListener('keydown', onKeydown);    // 快捷鍵攔截
+      window.addEventListener('beforeunload', onBeforeUnload); // 離頁警告
+      document.body.classList.add('exam-mode');
+    }
+
+    function disable(){
+      if(!active) return;
+      active = false;
+      document.removeEventListener('contextmenu', block);
+      document.removeEventListener('selectstart', block);
+      document.removeEventListener('copy', block);
+      document.removeEventListener('cut', block);
+      document.removeEventListener('paste', block);
+      document.removeEventListener('dragstart', block);
+      document.removeEventListener('keydown', onKeydown);
+      window.removeEventListener('beforeunload', onBeforeUnload);
+      document.body.classList.remove('exam-mode');
+    }
+
+    return { enable, disable };
+  })();
+
+  /* --------------------------------------------------------
+     Page 3：作答流程
+     -------------------------------------------------------- */
+  const quizEl = {}; // 作答頁動態元素快取
+
+  // 初始化作答：重置狀態並建立題目外殼
+  function startQuiz(){
+    AppState.currentQ = 0;
+    AppState.answers = {};
+    // 預先以空字串建立 30 題答案欄位
+    for(let i = 0; i < CONFIG.totalQuestions; i++){
+      AppState.answers['q' + (i + 1)] = '';
+    }
+    buildQuizShell();
+    renderQuestion();
+    AntiCheat.enable(); // 進入作答即啟動防作弊與離頁警告
+  }
+
+  // 建立作答頁固定結構（只建一次）
+  function buildQuizShell(){
+    const page3 = document.getElementById('page3');
+    page3.innerHTML =
+      '<div class="card">' +
+        '<div class="quiz-head">' +
+          '<div class="q-counter">第 <b id="qNow">1</b> / ' + CONFIG.totalQuestions + ' 題</div>' +
+          '<div class="q-timer"><span>剩餘</span><span class="sec" id="qSec">' + CONFIG.secondsPerQuestion + '</span><span>秒</span></div>' +
+        '</div>' +
+        '<div class="timer-track"><div class="timer-fill" id="qFill"></div></div>' +
+        '<div class="q-text" id="qText"></div>' +
+        '<div class="options" id="qOptions"></div>' +
+        '<div class="quiz-foot actions">' +
+          '<button class="btn btn-primary" id="qNext" disabled>下一題</button>' +
+        '</div>' +
+      '</div>';
+
+    quizEl.now     = document.getElementById('qNow');
+    quizEl.sec     = document.getElementById('qSec');
+    quizEl.fill    = document.getElementById('qFill');
+    quizEl.text    = document.getElementById('qText');
+    quizEl.options = document.getElementById('qOptions');
+    quizEl.next    = document.getElementById('qNext');
+
+    quizEl.next.addEventListener('click', goNextQuestion);
+  }
+
+  // 渲染目前題目
+  function renderQuestion(){
+    const idx = AppState.currentQ;
+    const item = QUESTIONS[idx];
+    const qKey = 'q' + (idx + 1);
+
+    quizEl.now.textContent = idx + 1;
+    quizEl.text.textContent = item.q;
+
+    // 建立選項
+    quizEl.options.innerHTML = '';
+    item.options.forEach(function(opt){
+      const key = opt[0], label = opt[1];
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.dataset.key = key;
+      btn.innerHTML =
+        '<span class="opt-key">' + key + '</span>' +
+        '<span class="opt-label">' + label + '</span>';
+      btn.addEventListener('click', function(){ selectOption(qKey, key, btn); });
+      quizEl.options.appendChild(btn);
+    });
+
+    // 最後一題按鈕文字改為「完成測驗」
+    quizEl.next.textContent = (idx === CONFIG.totalQuestions - 1) ? '完成測驗' : '下一題';
+    quizEl.next.disabled = true; // 須選擇後才可前進（但時間到會自動跳）
+
+    startTimer();
+  }
+
+  // 選擇選項
+  function selectOption(qKey, key, btn){
+    AppState.answers[qKey] = key;
+    quizEl.options.querySelectorAll('.option').forEach(function(o){
+      o.classList.remove('selected');
+    });
+    btn.classList.add('selected');
+    quizEl.next.disabled = false;
+  }
+
+  // 倒數計時
+  function startTimer(){
+    clearInterval(AppState.timerId);
+    AppState.remaining = CONFIG.secondsPerQuestion;
+
+    // 進度條重置為滿格（移除 transition 後再啟動，避免回跳動畫）
+    quizEl.fill.style.transition = 'none';
+    quizEl.fill.style.width = '100%';
+    quizEl.fill.classList.remove('warn');
+    // 強制重繪後開始遞減
+    void quizEl.fill.offsetWidth;
+    quizEl.fill.style.transition = 'width 1s linear';
+
+    updateTimerView();
+
+    AppState.timerId = setInterval(function(){
+      AppState.remaining -= 1;
+      updateTimerView();
+      if(AppState.remaining <= 0){
+        clearInterval(AppState.timerId);
+        // 時間到：未作答即記空字串（已預設），強制跳題
+        goNextQuestion(true);
+      }
+    }, 1000);
+  }
+
+  // 更新計時顯示與進度條
+  function updateTimerView(){
+    quizEl.sec.textContent = AppState.remaining;
+    const ratio = Math.max(0, AppState.remaining) / CONFIG.secondsPerQuestion;
+    quizEl.fill.style.width = (ratio * 100) + '%';
+    quizEl.fill.classList.toggle('warn', AppState.remaining <= 10);
+  }
+
+  // 前往下一題（或結束）；timedOut 表示為時間到自動觸發
+  function goNextQuestion(timedOut){
+    clearInterval(AppState.timerId);
+
+    if(AppState.currentQ < CONFIG.totalQuestions - 1){
+      AppState.currentQ += 1;
+      renderQuestion();
+    } else {
+      // 全部完成 → 進入第四階段完成頁（下一階段建置）
+      finishQuiz();
+    }
+  }
+
+  // 完成測驗：解除限制、渲染完成頁、組裝資料並送出
+  function finishQuiz(){
+    clearInterval(AppState.timerId);
+    AntiCheat.disable(); // 作答結束解除限制與離頁警告
+    goToPage(4);
+    buildDonePage();
+    submitResult();
+  }
+
+  // 組裝送出用 JSON（符合規格）
+  function buildPayload(){
+    return {
+      name: AppState.name,
+      phone: AppState.phone,
+      timestamp: getLocalISOString(), // 帶 +08:00 的 ISO 8601
+      answers: AppState.answers       // { q1:'A', q2:'', ... q30:'B' }
+    };
+  }
+
+  // 產生帶時區位移的 ISO 8601 字串（例：2026-05-29T14:30:00+08:00）
+  function getLocalISOString(){
+    const d = new Date();
+    const pad = function(n){ return String(n).padStart(2, '0'); };
+    // 取得相對 UTC 的位移（分鐘），東八區為 -480
+    const offsetMin = d.getTimezoneOffset();
+    const sign = offsetMin <= 0 ? '+' : '-';
+    const abs = Math.abs(offsetMin);
+    const offset = sign + pad(Math.floor(abs / 60)) + ':' + pad(abs % 60);
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+           'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) +
+           offset;
+  }
+
+  // 建立完成頁結構
+  function buildDonePage(){
+    const page4 = document.getElementById('page4');
+    page4.innerHTML =
+      '<div class="card done-wrap">' +
+        '<div class="done-icon">' +
+          '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '</div>' +
+        '<span class="eyebrow">Step 04 · 完成</span>' +
+        '<h1>感謝您完成測驗</h1>' +
+        '<p class="lead">您的作答已記錄，系統正在送出結果。</p>' +
+        '<div class="status sending" id="subStatus">' +
+          '<span class="spinner"></span><span id="subText">正在送出您的作答…</span>' +
+        '</div>' +
+        '<div class="actions" id="retryWrap" style="display:none;">' +
+          '<button class="btn btn-primary" id="retryBtn">重新送出</button>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('retryBtn').addEventListener('click', submitResult);
+  }
+
+  // 送出結果至 Power Automate
+  function submitResult(){
+    const statusEl = document.getElementById('subStatus');
+    const textEl   = document.getElementById('subText');
+    const retryEl  = document.getElementById('retryWrap');
+
+    // 還原為「送出中」狀態
+    retryEl.style.display = 'none';
+    statusEl.className = 'status sending';
+    statusEl.innerHTML = '<span class="spinner"></span><span id="subText">正在送出您的作答…</span>';
+
+    const url = CONFIG.ENDPOINT_URL;
+
+    // 尚未設定 URL 時的保護（部署前提醒）
+    if(!url){
+      showStatus('fail', '尚未設定送出位址（ENDPOINT_URL），請聯繫管理員。', true);
+      return;
+    }
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(buildPayload())
+    })
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      showStatus('ok', '作答已成功送出，感謝您的參與！', false);
+    })
+    .catch(function(err){
+      showStatus('fail', '送出失敗：' + err.message + '，請點擊重新送出。', true);
+    });
+  }
+
+  // 更新送出狀態顯示
+  function showStatus(type, message, showRetry){
+    const statusEl = document.getElementById('subStatus');
+    const retryEl  = document.getElementById('retryWrap');
+    const icons = {
+      ok:   '<svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      fail: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>'
+    };
+    statusEl.className = 'status ' + type;
+    statusEl.innerHTML = (icons[type] || '') + '<span>' + message + '</span>';
+    retryEl.style.display = showRetry ? 'flex' : 'none';
+  }
+
+  /* --------------------------------------------------------
+     初始化
+     -------------------------------------------------------- */
+  function init(){
+    cacheDom();
+    bindConsent();
+    bindForm();
+    goToPage(1);
+  }
+
+  return { init, AppState };
+})();
+
+document.addEventListener('DOMContentLoaded', QuizApp.init);
+</script>
+</body>
+</html>
