@@ -1171,14 +1171,15 @@ const QuizApp = (function(){
       return;
     }
 
-fetch(url, {
-  method: 'POST',
-  mode: 'no-cors',           // ← 加上這行
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(buildPayload())
-})
-    .then(function(res){
-      if(!res.ok) throw new Error('HTTP ' + res.status);
+    // no-cors 模式：瀏覽器不回傳 response 內容，但資料確實會送出
+    // 實際結果請至 Google Sheets 確認
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(buildPayload())
+    })
+    .then(function(){
       showStatus('ok', '作答已成功送出，感謝您的參與！', false);
     })
     .catch(function(err){
