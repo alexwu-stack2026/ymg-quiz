@@ -1103,7 +1103,8 @@ const QuizApp = (function(){
     AntiCheat.disable(); // 作答結束解除限制與離頁警告
     goToPage(4);
     buildDonePage();
-    submitResult();
+    // 延遲 100ms 確保 buildDonePage 的 DOM 完全就緒後再送出
+    setTimeout(function(){ submitResult(); }, 100);
   }
 
   // 組裝送出用 JSON（符合規格）
@@ -1152,27 +1153,32 @@ const QuizApp = (function(){
     document.getElementById('retryBtn').addEventListener('click', submitResult);
   }
 
-  // 送出結果至 Power Automate
+  // 送出結果至 Google Apps Script
   function submitResult(){
     const statusEl = document.getElementById('subStatus');
-    const textEl   = document.getElementById('subText');
     const retryEl  = document.getElementById('retryWrap');
+
+    // DOM 安全檢查（確保動態建立的元素已就緒）
+    if(!statusEl || !retryEl){
+      console.error('submitResult: DOM 元素尚未準備好，請稍後重試');
+      return;
+    }
 
     // 還原為「送出中」狀態
     retryEl.style.display = 'none';
     statusEl.className = 'status sending';
-    statusEl.innerHTML = '<span class="spinner"></span><span id="subText">正在送出您的作答…</span>';
+    statusEl.innerHTML = '<span class="spinner"></span><span>正在送出您的作答…</span>';
 
     const url = CONFIG.ENDPOINT_URL;
 
-    // 尚未設定 URL 時的保護（部署前提醒）
+    // 尚未設定 URL 時的保護
     if(!url){
-      showStatus('fail', '尚未設定送出位址（ENDPOINT_URL），請聯繫管理員。', true);
+      showStatus('fail', '尚未設定送出位址，請聯繫管理員。', true);
       return;
     }
 
     // no-cors 模式：瀏覽器不回傳 response 內容，但資料確實會送出
-    // 實際結果請至 Google Sheets 確認
+    // 實際是否成功請至 Google Sheets「作答記錄」工作表確認
     fetch(url, {
       method: 'POST',
       mode: 'no-cors',
