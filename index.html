@@ -590,7 +590,7 @@ body.exam-mode input, body.exam-mode textarea{
       <ul>
         <li><strong>蒐集目的：</strong>人才招募與甄選評估。</li>
         <li><strong>蒐集之個人資料類別：</strong>姓名、聯絡電話，以及本次線上測驗之作答內容。</li>
-        <li><strong>個人資料利用期間：</strong>自蒐集之日起，至本次招募作業結束後六個月止；屆期將依規定刪除或銷毀。</li>
+        <li><strong>個人資料利用期間：</strong>自蒐集之日起，至本次招募作業結束後兩年止；屆期將依規定刪除或銷毀。</li>
         <li><strong>利用對象與地區：</strong>僅供本公司人力資源單位及招募主管於台灣地區內部評估使用，<strong>不對外提供予任何第三方</strong>。</li>
         <li><strong>利用方式：</strong>以電子檔案形式儲存於本公司內部系統，供前述對象進行招募評估。</li>
       </ul>
@@ -631,7 +631,7 @@ const QuizApp = (function(){
     minNameLength: 2,
     // 台灣手機：09 開頭，共 10 碼
     phoneRegex: /^09\d{8}$/,
-    secondsPerQuestion: 20,
+    secondsPerQuestion: 30,
     totalQuestions: 30,
     // 第四階段填入 Power Automate HTTP Trigger URL
     ENDPOINT_URL: 'https://script.google.com/macros/s/AKfycbxQ82Sj9KK8y7whn9GcG9NfihD2Mj7KRU6DHz68IXCgAfQXoXgnHcrre_raJ7Mppskv0Q/exec'
@@ -658,36 +658,29 @@ const QuizApp = (function(){
     btn.disabled = true;
     btn.textContent = '題目載入中…';
 
-    fetch(CONFIG.ENDPOINT_URL, {
-      method: 'GET',
-      mode: 'no-cors'
-    })
-    .then(function(){
-      // no-cors 模式下 response 永遠是 opaque，無法讀取內容
-      // 改用不帶 mode 的第二次請求取得實際 JSON
-    })
-    .catch(function(){});
-
-    // 實際以可讀取回應的方式呼叫 GAS doGet
+    // GAS Web App 設定 Anyone 可存取後，直接以 GET 取得 JSON
     fetch(CONFIG.ENDPOINT_URL)
-    .then(function(res){ return res.json(); })
-    .then(function(data){
-      if(!data.success || !Array.isArray(data.questions) || data.questions.length === 0){
-        throw new Error(data.error || '題目資料為空');
-      }
-      QUESTIONS = data.questions;
-      btn.disabled = false;
-      btn.textContent = '我已了解，開始測驗';
-      callback(); // 載入成功，執行後續動作
-    })
-    .catch(function(err){
-      btn.disabled = false;
-      btn.textContent = '我已了解，開始測驗';
-      if(errBox){
-        errBox.textContent = '⚠️ 題目載入失敗，請重新整理頁面或聯繫管理員。（' + err.message + '）';
-        errBox.style.display = 'block';
-      }
-    });
+      .then(function(res){
+        if(!res.ok){ throw new Error('HTTP ' + res.status); }
+        return res.json();
+      })
+      .then(function(data){
+        if(!data.success || !Array.isArray(data.questions) || data.questions.length === 0){
+          throw new Error(data.error || '題目資料為空');
+        }
+        QUESTIONS = data.questions;
+        btn.disabled = false;
+        btn.textContent = '我已了解，開始測驗';
+        callback(); // 載入成功，執行後續動作
+      })
+      .catch(function(err){
+        btn.disabled = false;
+        btn.textContent = '我已了解，開始測驗';
+        if(errBox){
+          errBox.textContent = '⚠️ 題目載入失敗，請重新整理頁面或聯繫管理員。（' + err.message + '）';
+          errBox.style.display = 'block';
+        }
+      });
   }
 
   /* --------------------------------------------------------
