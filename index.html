@@ -560,7 +560,7 @@ body.exam-mode input, body.exam-mode textarea{
       <ul class="rule-list">
         <li>
           <span class="rule-ic">⏱</span>
-          <div><strong>每題限時 20 秒</strong><br><span>時間結束將自動跳至下一題，請把握作答時間。</span></div>
+          <div><strong>每題限時 30 秒</strong><br><span>時間結束將自動跳至下一題，請把握作答時間。</span></div>
         </li>
         <li>
           <span class="rule-ic">🚫</span>
@@ -605,7 +605,7 @@ body.exam-mode input, body.exam-mode textarea{
       <ul>
         <li><strong>蒐集目的：</strong>人才招募與甄選評估。</li>
         <li><strong>蒐集之個人資料類別：</strong>姓名、聯絡電話，以及本次線上測驗之作答內容。</li>
-        <li><strong>個人資料利用期間：</strong>自蒐集之日起，至本次招募作業結束後六個月止；屆期將依規定刪除或銷毀。</li>
+        <li><strong>個人資料利用期間：</strong>自蒐集之日起，至本次招募作業結束後兩年止；屆期將依規定刪除或銷毀。</li>
         <li><strong>利用對象與地區：</strong>僅供本公司人力資源單位及招募主管於台灣地區內部評估使用，<strong>不對外提供予任何第三方</strong>。</li>
         <li><strong>利用方式：</strong>以電子檔案形式儲存於本公司採用之雲端服務（Google Workspace）中，相關伺服器受 Google 服務條款約束，不得另行利用您的個人資料，本公司並依適用法規進行管理。</li>
       </ul>
@@ -646,7 +646,7 @@ const QuizApp = (function(){
     minNameLength: 2,
     // 台灣手機：09 開頭，共 10 碼
     phoneRegex: /^09\d{8}$/,
-    secondsPerQuestion: 20,
+    secondsPerQuestion: 30,
     totalQuestions: 30,
     // 第四階段填入 Power Automate HTTP Trigger URL
     ENDPOINT_URL: 'https://script.google.com/macros/s/AKfycbxQ82Sj9KK8y7whn9GcG9NfihD2Mj7KRU6DHz68IXCgAfQXoXgnHcrre_raJ7Mppskv0Q/exec'
